@@ -1,0 +1,6 @@
+$schema: https://azuremlschemas.azureedge.net/promptflow/latest/Run.schema.json
+flow: ./rag_flow_gpt35_turbo
+data: ./data/data.jsonl
+
+column_mapping:
+  question: ${data.question}

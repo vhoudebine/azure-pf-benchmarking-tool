@@ -1,0 +1,18 @@
+search_space:
+  llms:
+    aoai:
+      family: AZUREOPENAI
+      connection: aoai
+      deployment: 
+        type: choices
+        values: [gpt4-vh, gpt35-turbo-1106]
+    llama:
+      family: LLAMA
+      connection: 
+        type: choices
+        values: [llama2-maas]
+
+
+
+    #type: choice
+    #values: ["ai-search-earnings-calls", "ai-search-earnings-calls-v2"]

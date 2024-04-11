@@ -1,0 +1,8 @@
+{
+    "aoai_deployment_name": "gpt4-vh",
+    "flow_name": "grid_step_1",
+    "_copy_without_render": [
+        "*.jinja2",
+        ".promptflow/*"
+    ]
+}
