@@ -1,18 +1,20 @@
 search_space:
-  llms:
-    aoai:
-      family: AZUREOPENAI
-      connection: aoai
-      deployment: 
-        type: choices
-        values: [gpt4-vh, gpt35-turbo-1106]
-    llama:
-      family: LLAMA
-      connection: 
-        type: choices
-        values: [llama2-maas]
+  llm:
+    - aoai:
+        family: AZUREOPENAI
+        connection: aoai
+        deployment: 
+          type: choices
+          values: [gpt4-vh, gpt35-turbo-1106]
+    - llama2:
+        family: LLAMA
+        connection: llama2-7b-maas
+    - mistral:
+        family: MISTRAL
+        connection: mistral-large-maas
 
-
-
-    #type: choice
-    #values: ["ai-search-earnings-calls", "ai-search-earnings-calls-v2"]
+  embedding:
+    - aoai:
+        family: AZUREOPENAI
+        connection: aoai
+        deployment: text-embedding-ada-002

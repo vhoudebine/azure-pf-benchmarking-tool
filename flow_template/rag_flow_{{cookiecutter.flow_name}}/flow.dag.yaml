@@ -1,0 +1,41 @@
+inputs:
+  question:
+    type: string
+    default: what is the capital of France
+  llm_connection:
+    type: string
+    default: {{ cookiecutter.llm.connection }}
+outputs:
+  response:
+    type: string
+    reference: ${llm_node.output}
+
+nodes: 
+{% if cookiecutter.llm.family == 'AZUREOPENAI' %}
+- name: llm_node
+  type: llm
+  source:
+    type: code
+    path: llm_node.jinja2
+  inputs:
+    deployment_name: {{ cookiecutter.llm.deployment }}
+    response_format:
+      type: text
+    max_tokens: 300
+    question: ${inputs.question}
+  connection: {{ cookiecutter.llm.connection }}
+  api: chat
+{% else %}
+{% if cookiecutter.llm.family == 'LLAMA' or cookiecutter.llm.family == 'MISTRAL' %}
+- name: llm_node
+  type: python
+  source:
+    type: code
+    path: maas_llm.py
+  inputs:
+    conn: {{cookiecutter.llm.connection}}
+    message: ${inputs.question}
+  use_variants: false
+{% else %}
+{% endif %}
+{% endif %}
