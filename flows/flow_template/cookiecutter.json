@@ -1,0 +1,18 @@
+{
+    "llm": {
+        "variant_name": "cohere",
+        "family": "COHERE",
+        "connection": "cohere-command-r-maas"
+    },
+    "embedding": {
+        "variant_name": "aoai",
+        "family": "AZUREOPENAI",
+        "connection": "aoai",
+        "deployment": "text-embedding-ada-002"
+    },
+    "_copy_without_render": [
+        "*.jinja2",
+        ".promptflow/*"
+    ],
+    "flow_name": "grid_step_4"
+}

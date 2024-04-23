@@ -1,0 +1,46 @@
+{
+    "code": {
+        "f1_score.py": {
+            "type": "python",
+            "inputs": {
+                "ground_truth": {
+                    "type": [
+                        "string"
+                    ]
+                },
+                "answer": {
+                    "type": [
+                        "string"
+                    ]
+                }
+            },
+            "source": "f1_score.py",
+            "function": "compute_f1_score"
+        },
+        "concat_scores.py": {
+            "type": "python",
+            "inputs": {
+                "f1_score": {
+                    "type": [
+                        "string"
+                    ]
+                }
+            },
+            "source": "concat_scores.py",
+            "function": "concat_results"
+        },
+        "aggregate_variants_results.py": {
+            "type": "python",
+            "inputs": {
+                "results": {
+                    "type": [
+                        "object"
+                    ]
+                }
+            },
+            "source": "aggregate_variants_results.py",
+            "function": "aggregate_variants_results"
+        }
+    },
+    "package": {}
+}

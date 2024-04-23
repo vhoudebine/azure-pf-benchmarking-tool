@@ -1,4 +1,4 @@
-{"question":"What is the capital of the United States?"}
-{"question":"What is the capital of France?"}
-{"question":"What is the capital of Mexico?"}
-{"question":"What is the capital of Spain?"}
+{"question":"What is the capital of the United States?", "ground_truth":"Washington D.C"}
+{"question":"What is the capital of France?", "ground_truth":"Paris"}
+{"question":"What is the capital of Mexico?", "ground_truth":"Mexico City"}
+{"question":"What is the capital of Spain?", "ground_truth":"Madrid"}

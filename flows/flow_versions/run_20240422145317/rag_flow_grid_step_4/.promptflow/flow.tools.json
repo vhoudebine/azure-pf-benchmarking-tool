@@ -1,0 +1,22 @@
+{
+    "code": {
+        "maas_llm.py": {
+            "type": "python",
+            "inputs": {
+                "message": {
+                    "type": [
+                        "string"
+                    ]
+                },
+                "conn": {
+                    "type": [
+                        "CustomConnection"
+                    ]
+                }
+            },
+            "source": "maas_llm.py",
+            "function": "my_python_tool"
+        }
+    },
+    "package": {}
+}
