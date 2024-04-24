@@ -47,6 +47,7 @@ subscription_id = os.environ.get("AZURE_SUBSCRIPTION_ID")
 resource_group = os.environ.get("AZURE_RESOURCE_GROUP")
 workspace_name = os.environ.get("AZURE_WORKSPACE_NAME")
 pf_ci = os.environ.get("PF_CI")
+
 logger.debug(f"Azure Subscription ID: {subscription_id}")
 
 
