@@ -6,13 +6,13 @@ search_space:
   llm:
     - aoai:
         family: AZUREOPENAI
-        connection: aoai
+        connection: openai-az
         deployment: 
           type: choices
-          values: [gpt4-vh, gpt35-turbo-1106]
+          values: [gpt-35-turbo, gpt-4]
     - llama2:
         family: LLAMA
-        connection: llama2-7b-maas
+        connection: maas_tenant_llama3_8b
     - mistral:
         family: MISTRAL
         connection: mistral-large-maas
@@ -22,7 +22,7 @@ search_space:
   embedding:
     - aoai:
         family: AZUREOPENAI
-        connection: aoai
+        connection: openai-az
         deployment: text-embedding-ada-002
 
   #vector_store:

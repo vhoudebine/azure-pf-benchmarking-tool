@@ -1,1 +1,5 @@
 .env
+flows/flow_versions/*
+*.pyc
+config.json
+cookiecutter.json

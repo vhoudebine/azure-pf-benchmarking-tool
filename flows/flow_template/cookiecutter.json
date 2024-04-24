@@ -7,7 +7,7 @@
     "embedding": {
         "variant_name": "aoai",
         "family": "AZUREOPENAI",
-        "connection": "aoai",
+        "connection": "openai-az",
         "deployment": "text-embedding-ada-002"
     },
     "_copy_without_render": [
