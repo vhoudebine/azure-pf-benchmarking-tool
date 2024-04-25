@@ -12,7 +12,7 @@ This tool extends Promptflow to help benchmark LLM systems by running a grid-sea
 #### 1. Install dependencies
 
 
-#### A. Via the terminal, _from this repo's home directory_, run the following commands
+####  Via the terminal, _from this repo's home directory_, run the following commands
 
 ```bash
 conda env create --name pf_grid --file=./environment/conda.yaml
