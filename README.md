@@ -28,6 +28,8 @@ python -m ipykernel install --user --name pf_grid --display-name "pf_grid"
 Use this [.sample.env file](.sample.env) as a guide. 
 
 
+demo git
+
 #### 2. Set-up connections to your LLM and Azure AI search
 #### 3. Define your search space
 #### 4. (Optional) modify the Promptflow template
