@@ -91,6 +91,8 @@ grid_search_steps = utils.cartesian_product(*search_space)
 
 logger.info(f"Number of Grid Search Steps: {len(grid_search_steps)}")
 
+for i, step in enumerate(grid_search_steps):
+    logger.debug(f"Grid Search Step {i}: {step}")
 
 file_path = "./flows/flow_template/cookiecutter_template.json"
 cookiecutter_file_path = "./flows/flow_template/cookiecutter.json"
@@ -212,6 +214,7 @@ else:
     aml_ws = Workspace.get(workspace_name, subscription_id=subscription_id, resource_group=resource_group, auth=interactive_auth)
     region = aml_ws.location
     datastore = aml_ws.get_default_datastore()
+    tenant_id = aml_ws.get_details().get('identity').get('tenant_id')
 
     
     for run in runs:
@@ -251,8 +254,31 @@ else:
             eval_run_statuses = [pf.runs.get(eval_run_id.get('eval')).status for eval_run_id in eval_runs]
             eval_success_count = eval_run_statuses.count("Completed")
             logger.info(f"Evaluation runs completed. {eval_success_count} out of {len(eval_runs)} runs completed successfully.")
-            for eval_run in eval_runs:
-                logger.info(f" Evaluation results for run {eval_run.get('base_run')} : {pf.get_metrics(eval_run.get('eval'))}")
+
+            #### Create a pandas dataframe to show grid search results
+            results = []
+            for i, eval_run in enumerate(eval_runs):
+                eval_run_id = eval_run.get('eval')
+                index = eval_run_id.split("_")[5]
+                grid_parameters = grid_search_steps[int(index)]
+                eval_metrics = pf.get_metrics(eval_run_id)
+                results.append({"pf_run_id": eval_run.get('base_run'), 
+                                "variant_index": index,
+                                "parameters": grid_parameters,
+                                "metrics": eval_metrics})
+            print('''##################################################
+                      
+                      GRID SEARCH RESULTS
+
+                      ##################################################
+                      
+                      ''')
+            eval_run_str = ','.join([ev.get('eval') for ev in eval_runs])
+            url = f'https://ml.azure.com/prompts/list?wsid=/subscriptions/{subscription_id}/resourceGroups/{resource_group}/providers/Microsoft.MachineLearningServices/workspaces/{workspace_name}&tid=16b3c013-d300-468d-ac64-7eda0820b6d3&runId={eval_run_str}#FlowsRun'
+            print(f"View the evaluation runs in AzureML: {url}")
+
+            print("Grid Search results details:")
+            print(tabulate(results, headers="keys", tablefmt="pretty"))
         else:
             logger.info(f"Exiting the program.")
 

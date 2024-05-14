@@ -14,5 +14,5 @@
         "*.jinja2",
         ".promptflow/*"
     ],
-    "flow_name": "grid_step_4"
+    "flow_name": "grid_step_9"
 }

@@ -1,0 +1,27 @@
+inputs:
+  question:
+    type: string
+    default: what is the capital of France
+  llm_connection:
+    type: string
+    default: aoai
+outputs:
+  response:
+    type: string
+    reference: ${llm_node.output}
+
+nodes: 
+
+- name: llm_node
+  type: llm
+  source:
+    type: code
+    path: llm_node.jinja2
+  inputs:
+    deployment_name: gpt4-vh
+    response_format:
+      type: text
+    max_tokens: 300
+    question: ${inputs.question}
+  connection: aoai
+  api: chat

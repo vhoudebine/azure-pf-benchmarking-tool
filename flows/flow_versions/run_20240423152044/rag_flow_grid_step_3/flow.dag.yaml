@@ -1,0 +1,25 @@
+inputs:
+  question:
+    type: string
+    default: what is the capital of France
+  llm_connection:
+    type: string
+    default: mistral-large-maas
+outputs:
+  response:
+    type: string
+    reference: ${llm_node.output}
+
+nodes: 
+
+
+- name: llm_node
+  type: python
+  source:
+    type: code
+    path: maas_llm.py
+  inputs:
+    conn: mistral-large-maas
+    message: ${inputs.question}
+  use_variants: false
+
