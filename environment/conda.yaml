@@ -1,0 +1,10 @@
+name: pf_eval
+  - conda-forge
+  - defaults
+  - jupyter
+dependencies:
+  - python=3.11
+  - pip
+  - ipykernel
+  - pip:
+    - -r requirements.txt

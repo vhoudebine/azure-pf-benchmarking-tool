@@ -10,6 +10,24 @@ This tool extends Promptflow to help benchmark LLM systems by running a grid-sea
 ### Getting started 
 
 #### 1. Install dependencies
+
+
+#### A. Via the terminal, _from this repo's home directory_, run the following commands
+
+```bash
+conda env create --name pf_grid --file=./environment/conda.yaml
+conda activate pf_grid
+```
+
+If you are not using VS Code you may need to run the following command to install the kernel
+
+```bash
+python -m ipykernel install --user --name pf_grid --display-name "pf_grid"
+```
+ **Create and populate a .env file in the home directory of this repository.** 
+Use this [.sample.env file](.sample.env) as a guide. 
+
+
 #### 2. Set-up connections to your LLM and Azure AI search
 #### 3. Define your search space
 #### 4. (Optional) modify the Promptflow template

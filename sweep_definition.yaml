@@ -2,6 +2,8 @@ objective:
     goal: maximize
     primary_metric: f1_score
 
+compute: ci_runtime
+
 search_space:
   llm:
     - aoai:
@@ -20,16 +22,13 @@ search_space:
         family: COHERE
         connection: cohere-command-r-maas
 
-  embedding:
-    - aoai:
-        family: AZUREOPENAI
-        connection: aoai
-        deployment: text-embedding-ada-002
-
-  vector_store:
-    - ai-search:
-        family: AZUREAISEARCH
-        connection: ai-search
-        index: 
-          type: choices
-          values: [10k-recursivesplitter, 10k-semantichunking]
+  vector-search:
+    - search-config-1:
+        embedding:
+          family: AZUREOPENAI
+          connection: aoai
+          deployment: text-embedding-ada-002
+        vector_store:
+          family: AZUREAISEARCH
+          connection: ai-search
+          index: carsmanual-recursivetextsplitter

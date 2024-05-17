@@ -17,9 +17,9 @@ import os
 def create_cookiecutter(data, grid_step):
     data_dict = deepcopy(data)
     for node_id in data_dict:
-        if node_id in ['llm','embedding','vector_store'] and node_id in grid_step.keys():
+        if node_id in ['llm','vector-search'] and node_id in grid_step.keys():
             data_dict[node_id]=grid_step[node_id]
-        elif node_id in ['llm','embedding','vector_store'] and node_id not in grid_step.keys():
+        elif node_id in ['llm','vector-search'] and node_id not in grid_step.keys():
             del data_dict[node_id]
     return data_dict
 
