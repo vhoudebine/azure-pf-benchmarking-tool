@@ -4,12 +4,19 @@
         "family": "MISTRAL",
         "connection": "mistral-large-maas"
     },
-    "embedding": {
-        "variant_name": "aoai",
-        "family": "AZUREOPENAI",
-        "connection": "aoai",
-        "deployment": "text-embedding-ada-002"
-    },
+    "vector_search":{
+        "variant_name": "search-config-1", 
+        "embedding": {
+            "family": "AZUREOPENAI", 
+            "connection": "aoai", 
+            "deployment": "text-embedding-ada-002"
+            }, 
+        "vector_store": {
+            "family": "AZUREAISEARCH", 
+            "connection": "ai-search", 
+            "index": "carsmanual-recursivetextsplitter"}
+        },
+
     "_copy_without_render": [
         "*.jinja2",
         ".promptflow/*"

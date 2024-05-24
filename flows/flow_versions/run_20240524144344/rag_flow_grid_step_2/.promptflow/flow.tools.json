@@ -1,0 +1,59 @@
+{
+    "code": {
+        "ai_search.py": {
+            "type": "python",
+            "inputs": {
+                "question": {
+                    "type": [
+                        "string"
+                    ]
+                },
+                "search_index_name": {
+                    "type": [
+                        "string"
+                    ]
+                },
+                "embedding_deployment": {
+                    "type": [
+                        "string"
+                    ]
+                },
+                "openai_conn": {
+                    "type": [
+                        "AzureOpenAIConnection"
+                    ]
+                },
+                "search_conn": {
+                    "type": [
+                        "CognitiveSearchConnection"
+                    ]
+                }
+            },
+            "source": "ai_search.py",
+            "function": "my_python_tool"
+        },
+        "maas_llm.py": {
+            "type": "python",
+            "inputs": {
+                "question": {
+                    "type": [
+                        "string"
+                    ]
+                },
+                "context": {
+                    "type": [
+                        "string"
+                    ]
+                },
+                "conn": {
+                    "type": [
+                        "CustomConnection"
+                    ]
+                }
+            },
+            "source": "maas_llm.py",
+            "function": "my_python_tool"
+        }
+    },
+    "package": {}
+}

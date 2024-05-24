@@ -4,11 +4,18 @@
         "family": "COHERE",
         "connection": "cohere-command-r-maas"
     },
-    "embedding": {
-        "variant_name": "aoai",
-        "family": "AZUREOPENAI",
-        "connection": "aoai",
-        "deployment": "text-embedding-ada-002"
+    "vector_search": {
+        "variant_name": "search-config-1",
+        "embedding": {
+            "family": "AZUREOPENAI",
+            "connection": "aoai",
+            "deployment": "text-embedding-ada-002"
+        },
+        "vector_store": {
+            "family": "AZUREAISEARCH",
+            "connection": "vince_ai_search",
+            "index": "rivian-owner-guide-recursivesplitter"
+        }
     },
     "_copy_without_render": [
         "*.jinja2",

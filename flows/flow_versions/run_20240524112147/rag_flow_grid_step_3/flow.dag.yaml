@@ -1,0 +1,42 @@
+inputs:
+  question:
+    type: string
+    default: what is the capital of France
+  llm_connection:
+    type: string
+    default: mistral-large-maas
+outputs:
+  response:
+    type: string
+    reference: ${llm_node.output}
+  context:
+    type: string
+    reference: ${vector_search_node.output}
+environment:
+  python_requirements_txt: requirements.txt
+nodes: 
+- name: vector_search_node
+  type: python
+  source:
+    type: code
+    path: ai_search.py
+  inputs:
+    search_conn: vince_ai_search
+    openai_conn: aoai
+    question: ${inputs.question}
+    search_index_name: rivian-owner-guide-recursivesplitter
+    embedding_deployment: text-embedding-ada-002
+  use_variants: false
+
+
+- name: llm_node
+  type: python
+  source:
+    type: code
+    path: maas_llm.py
+  inputs:
+    conn: mistral-large-maas
+    question: ${inputs.question}
+    context: ${vector_search_node.output}
+  use_variants: false
+

@@ -73,13 +73,14 @@ if not any(node in sweep_config.get('search_space') for node in ['llm', 'vector-
 
 
 # parse yaml to get the compute configuration
+pf_ci = None
 if 'compute' in sweep_config:
     pf_ci = sweep_config.get('compute')
 
 # parse yaml to get the search space
 search_space =[]
 for node in sweep_config.get('search_space'):
-    if node in ['llm','vector-search']:
+    if node in ['llm','vector_search']:
         grid = []
         node_values = sweep_config.get('search_space').get(node)
         for variant in node_values:
@@ -87,7 +88,7 @@ for node in sweep_config.get('search_space'):
             step_dict[node] = utils.flatten_dict(variant)
             grid.append(step_dict)
         grid_final = []
-        if node =='vector-search':
+        if node =='vector_search':
             for el in grid:
                 grid_final.append(el)
         else:
@@ -139,7 +140,7 @@ for i, search_step_dict in enumerate(grid_search_steps):
         json.dump(step_dict, file, indent=4)
 
     logger.debug(f"Generating PromptFlow flow for Grid Step: {i}")
-    subprocess.run([f"cd {directory} && cookiecutter ../../flow_template --no-input --skip-if-file-exists"], shell=True)
+    subprocess.run([f"cd {directory} && cookiecutter ../../flow_template --no-input --skip-if-file-exists"], shell=True, check=True)
     logger.debug(f"Flow Generated for Grid Step: {i} at {directory}/rag_flow_grid_step_{i}")
 
 logger.info(f"Created {len(grid_search_steps)} PromptFlow flows in {directory} for the sweep run: {sweep_run_id}")
@@ -153,7 +154,7 @@ else:
   
     # Get a handle to workspace, it will use config.json in current and parent directory.
     pf = PFClient.from_config(credential=credential)
-    connections_list = [connection.name for connection in pf.connections.list()]
+    connections_list = [connection.name for connection in pf._connections.list()]
 
     # Verify that all connections listed in the yaml file exist in the workspace
     def find_connection_values(dictionary):
@@ -177,7 +178,7 @@ else:
     def create_and_run_flow(i):
     # Apply your function to the dictionary here
         flow = os.path.join("./flows/flow_versions", f"{sweep_run_id}/rag_flow_grid_step_{i}")
-        data ="./evaluation_data/data.jsonl"
+        data ="./evaluation_data/qa_couples.jsonl"
         # create run
         args = {
             "flow": flow,
@@ -186,7 +187,7 @@ else:
                 "question": "${data.question}"
             }
         }
-        if pf_ci:
+        if pf_ci is not None:
             args["runtime"] = pf_ci
         
         base_run = pf.run(**args)
@@ -197,19 +198,36 @@ else:
 
     # Create a thread for each dictionary
     runs = []
-    def run_flow_and_wait(i):
+    def run_flow_and_wait(i, retries=3):
         logger.info(f"Submitting run for Grid Step: {i}")
-        run = create_and_run_flow(i)
-        completed = False
-        while not completed:
-            status = pf.runs.get(run.name).status
-            if status in ["Completed", "Failed"]:
-                completed = True
-            else:
-                logger.debug(f"Run {run.name} is in status {status}")
-                time.sleep(30)
-        runs.append(run)
-        logger.info(f"Run {run.name} completed with status {status}")
+        attempt = 0
+        run = None
+        while attempt < retries:
+            try:
+                run = create_and_run_flow(i)
+                break
+            except Exception as e:
+                logger.error(f"Error creating run for Grid Step: {i}. Retrying...")
+                attempt += 1
+                if attempt < retries:  
+                    logger.info(f"Retrying flow for index {i} (attempt {attempt + 1})")  
+                    time.sleep(1)  # Optional: Add a delay between retries  
+                else:  
+                    print(f"Failed flow for index {i} after {retries} attempts")  
+                
+        if run is not None:
+            completed = False
+            while not completed:
+                status = pf.runs.get(run.name).status
+                if status in ["Completed", "Failed"]:
+                    completed = True
+                else:
+                    logger.debug(f"Run {run.name} is in status {status}")
+                    time.sleep(30)
+            runs.append(run)
+            logger.info(f"Run {run.name} completed with status {status}")
+    
+    
 
     eval_runs = []
     def create_and_run_eval_flow(i):
@@ -220,12 +238,14 @@ else:
         
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
         experiment_name = "eval_"+runs[i].name
-        args = { 'flow':'./flows/evaluation_flow',
-                'data':'./evaluation_data/data.jsonl',
+        args = { 'flow':'./flows/rag_evaluation_flow', ### change with program argument
+                'data':'./evaluation_data/qa_couples.jsonl', ### change with program argument
                 'run':runs[i].name,
                 'column_mapping':{
-                    "answer": "${run.outputs.response}",
-                    "ground_truth": "${data.ground_truth}"         },
+                    "question": "${data.question}",
+                    "context": "${run.outputs.search_context}",
+                    "answer": "${run.outputs.answer}",
+                    "ground_truth": "${data.answer}"},
                 'name':f"{experiment_name}_eval_{timestamp}",
                 'display_name':f"{experiment_name}_eval_{timestamp}" }
         if pf_ci:
@@ -251,27 +271,7 @@ else:
     success_count = run_statuses.count("Completed")
 
     logger.info(f"Grid Search Run Completed. {success_count} out of {len(runs)} runs completed successfully.")
-    """
-    logger.info(f"Dowloading the artifacts for the completed runs.")
-    logger.info(f"Connecting to AML workspace.")
     
-    interactive_auth = InteractiveLoginAuthentication()
-    aml_ws = Workspace.get(workspace_name, subscription_id=subscription_id, resource_group=resource_group, auth=interactive_auth)
-    region = aml_ws.location
-    datastore = aml_ws.get_default_datastore()
-    tenant_id = aml_ws.get_details().get('identity').get('tenant_id')
-
-    
-    for run in runs:
-        run_id = run.name
-        utils.download_artifacts(run_id, 
-                                 datastore, 
-                                 "debug_info", 
-                                 aml_ws,
-                                 f"./run_outputs/{sweep_run_id}/run_{run_id}")
-    
-    logger.info(f"Downloaded the artifacts for the completed runs to ./run_outputs/{sweep_run_id}")
-    """
     def run_eval_flow_and_wait(i):
         logger.info(f"Submitting evaluation run for Grid Step: {i}")
         eval_run = create_and_run_eval_flow(i)

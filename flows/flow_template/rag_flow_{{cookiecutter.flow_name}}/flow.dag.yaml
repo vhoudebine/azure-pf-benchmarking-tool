@@ -9,8 +9,24 @@ outputs:
   response:
     type: string
     reference: ${llm_node.output}
-
+  context:
+    type: string
+    reference: ${vector_search_node.output}
+environment:
+  python_requirements_txt: requirements.txt
 nodes: 
+- name: vector_search_node
+  type: python
+  source:
+    type: code
+    path: ai_search.py
+  inputs:
+    search_conn: {{cookiecutter.vector_search.vector_store.connection}}
+    openai_conn: {{cookiecutter.vector_search.embedding.connection}}
+    question: ${inputs.question}
+    search_index_name: {{cookiecutter.vector_search.vector_store.index}}
+    embedding_deployment: {{cookiecutter.vector_search.embedding.deployment}}
+  use_variants: false
 {% if cookiecutter.llm.family == 'AZUREOPENAI' %}
 - name: llm_node
   type: llm
@@ -23,6 +39,7 @@ nodes:
       type: text
     max_tokens: 300
     question: ${inputs.question}
+    context: ${vector_search_node.output}
   connection: {{ cookiecutter.llm.connection }}
   api: chat
 {% else %}
@@ -34,7 +51,8 @@ nodes:
     path: maas_llm.py
   inputs:
     conn: {{cookiecutter.llm.connection}}
-    message: ${inputs.question}
+    question: ${inputs.question}
+    context: ${vector_search_node.output}
   use_variants: false
 {% else %}
 {% endif %}
